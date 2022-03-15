@@ -4,8 +4,11 @@
   "description": "boiler plate to use with pern stack ( PosgreSQL - Express - React - Node )",
   "main": "index.js",
   "scripts": {
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "heroku-postbuild": "npm run install-client && npm run build",
     "start": "node server/index.js",
-    "build": "cd client && npm install && npm run build",
+    "client": "cd client && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
