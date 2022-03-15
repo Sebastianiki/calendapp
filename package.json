@@ -1,0 +1,24 @@
+{
+  "name": "boiler-plate-pern",
+  "version": "1.0.0",
+  "description": "boiler plate to use with pern stack ( PosgreSQL - Express - React - Node )",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sebastianiki/boiler-plate-pern.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sebastianiki/boiler-plate-pern/issues"
+  },
+  "homepage": "https://github.com/Sebastianiki/boiler-plate-pern#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
