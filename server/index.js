@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('../client/build'))
+  app.use(express.static(path.resolve(__dirname, '../client/build')));
 }
 
 app.get("/api", (req, res) => {
