@@ -16,7 +16,7 @@
   "production": {
     "username": "gpozsbbmjlrdoe",
     "password": "332302f740e08ab3d35eb02cf1281cb8c29059415f84cef8689d9bc3e3a3f623",
-    "database": "boilerpern",
+    "database": "dcj6ipblev1hm8",
     "host": "ec2-34-206-148-196.compute-1.amazonaws.com1",
     "dialect": "postgres"
   }
