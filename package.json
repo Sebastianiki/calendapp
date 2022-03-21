@@ -10,6 +10,7 @@
     "start": "node server/index.js",
     "client": "cd client && npm start",
     "dev": "concurrently -n 'server,client' -c 'red,green' \"nodemon server/index.js\" \"npm run client\"",
+    "install-nodes": "npm install && npm run install-client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
