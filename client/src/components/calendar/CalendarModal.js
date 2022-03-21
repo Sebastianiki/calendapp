@@ -12,7 +12,6 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import SaveIcon from '@mui/icons-material/Save';
 import moment from 'moment';
-import { set } from 'express/lib/application';
 
 export const CalendarModal = () => {
 
@@ -44,12 +43,12 @@ export const CalendarModal = () => {
 
   const handleSubmitForm = () => {
 
-    // const momentStart = moment(formValues.start);
-    // const momentEnd = moment(formValues.start);
-    // const errors = { ...errorsForm};
-    // if(formValues.title === '') errors = { ...errors, title: { error: true, msg: 'El titulo es obligatorio' } }
+    const momentStart = moment(formValues.start);
+    const momentEnd = moment(formValues.start);
+    const errors = { ...errorsForm};
+    if(formValues.title === '') errors = { ...errors, title: { error: true, msg: 'El titulo es obligatorio' } }
     // if(momentStart.isSameOrAfter(momentEnd)) errors = { ...errors, end: { error: true, msg: 'La fecha no puede ser menor a la fecha de inicio' } }
-    // console.log(errorsForm);
+    console.log(errors);
     // console.log(errorsForm);
     // setErrorsForm(errors);
     // if(errorsForm.title.error) {
