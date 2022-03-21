@@ -27,12 +27,10 @@ export const CalendarModal = () => {
   })
   const [errorsForm, setErrorsForm] = useState({
     title: { error: false, msg: ''},
-    notes: { error: false, msg: ''},
-    start: { error: false, msg: ''},
     end: { error: false, msg: ''},
   })
 
-  const { title, notes} = formValues;
+  const { title, notes, start, end} = formValues;
 
   const handleTextFieldChange = ({ target }) => {
     setFormValues({
@@ -43,25 +41,26 @@ export const CalendarModal = () => {
 
   const handleSubmitForm = () => {
 
-    const momentStart = moment(formValues.start);
-    const momentEnd = moment(formValues.start);
-    const errors = { ...errorsForm};
+    const momentStart = moment(start);
+    const momentEnd = moment(end);
+
+    let errors = {
+      title: { error: false, msg: ''},
+      end: { error: false, msg: ''},
+    }
+
     if(formValues.title === '') errors = { ...errors, title: { error: true, msg: 'El titulo es obligatorio' } }
-    // if(momentStart.isSameOrAfter(momentEnd)) errors = { ...errors, end: { error: true, msg: 'La fecha no puede ser menor a la fecha de inicio' } }
-    console.log(errors);
-    // console.log(errorsForm);
-    // setErrorsForm(errors);
-    // if(errorsForm.title.error) {
-    //   console.log('enmtro');
-    //   return
-    // }
-    // console.log('paso');
-    // setErrorsForm({
-    //   title: { error: false, msg: ''},
-    //   notes: { error: false, msg: ''},
-    //   start: { error: false, msg: ''},
-    //   end: { error: false, msg: ''},
-    // })
+    if(momentStart.isSameOrAfter(momentEnd)) errors = { ...errors, end: { error: true, msg: 'La fecha no puede ser menor a la fecha de inicio' } }
+
+    if(errors.title.error || errors.end.error) {
+      setErrorsForm(errors);
+      return
+    }
+
+    setErrorsForm({
+      title: { error: false, msg: ''},
+      end: { error: false, msg: ''},
+    })
   }
 
   return (
@@ -88,9 +87,12 @@ export const CalendarModal = () => {
             }}
           />
           <DateTimePicker
+            
             renderInput={(props) => 
               <TextField
-              margin="normal"
+                margin="normal"
+                error={true}
+                helperText={errorsForm.end.msg}
                 {...props}
               />
             }
@@ -106,10 +108,9 @@ export const CalendarModal = () => {
           />
           <TextField
             error={errorsForm.title.error}
-            required
+            helperText={errorsForm.title.msg}
             name='title'
             label="TITULO"
-            helperText={errorsForm.title.msg}
             margin='normal'
             value={title}
             onChange={handleTextFieldChange}
