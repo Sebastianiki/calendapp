@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
   Button,
@@ -12,10 +13,14 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import SaveIcon from '@mui/icons-material/Save';
 import moment from 'moment';
+import { uiCloseModal } from '../../actions/ui';
+
+const now = moment().minutes(0).seconds(0).add(1,'hours')
 
 export const CalendarModal = () => {
 
-  const now = moment().minutes(0).seconds(0).add(1,'hours')
+  const { modalOpen } = useSelector( state => state.ui )
+  const dispatch = useDispatch();
 
   const [startDate, setStartDate] = useState(now.toDate())
   const [endDate, setEndDate] = useState(now.add(1,'hours').toDate())
@@ -63,10 +68,14 @@ export const CalendarModal = () => {
     })
   }
 
+  const handleCloseModal = () => {
+    dispatch( uiCloseModal() )
+  }
+
   return (
     <div>
       <LocalizationProvider dateAdapter={DateAdapter}>
-      <Dialog open={true}>
+      <Dialog open={modalOpen} onClose={handleCloseModal}>
         <DialogTitle sx={{ textAlign:'center'}}>Nuevo Evento</DialogTitle>
         <Box sx={{ mx: 3, display:'flex', flexDirection: 'column', width:'350px'}}>
           <DateTimePicker
