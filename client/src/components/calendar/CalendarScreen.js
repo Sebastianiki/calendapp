@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/es'
+import { Calendar, momentLocalizer } from 'react-big-calendar'
 import { Navbar } from '../ui/Navbar';
 import { messages } from '../../helpers/calendar-messages-es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Box } from '@mui/material';
+import { 
+  Box,
+  Fab,
+  Tooltip
+} from '@mui/material';
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
-import { useDispatch } from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
+import { eventSetActive } from '../../actions/events';
+import AddIcon from '@mui/icons-material/Add';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment)
@@ -36,8 +42,8 @@ export const CalendarScreen = () => {
     dispatch( uiOpenModal() );
   };
 
-  const onSelectedEvent = (e) => {
-
+  const onSelectEvent = (e) => {
+    dispatch( eventSetActive(e) );
   }
 
   const onViewChange = (e) => {
@@ -67,7 +73,7 @@ export const CalendarScreen = () => {
           messages={ messages }
           eventPropGetter={eventStyleGetter}
           onDoubleClickEvent={onDoubleClick}
-          onSelectEvent={onSelectedEvent}
+          onSelectEvent={onSelectEvent}
           onView={onViewChange}
           view={lastView}
           components={{
@@ -76,6 +82,11 @@ export const CalendarScreen = () => {
         />
       </Box>
       <CalendarModal/>
+      <Tooltip title="Add Event" placement="top">
+        <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 0, right: 0, mr: 5, mb: 5}} onClick={(e) => dispatch( uiOpenModal() )}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </Box>
   )
 }
