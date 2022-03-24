@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/es'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
@@ -14,27 +14,18 @@ import {
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { uiOpenModal } from '../../actions/ui';
-import { eventSetActive } from '../../actions/events';
+import { eventCleanActive, eventSetActive, eventDeleted } from '../../actions/events';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment)
 
-const events = [{
-  title: 'Birthday Mithos',
-  start: moment().toDate(),
-  end: moment().add( 2, 'hours').toDate(),
-  bgcolor: '#fafafa',
-  notes: 'buy cake',
-  user: {
-    id: '123',
-    name: 'Sebastian'
-  }
-}]
-
 export const CalendarScreen = () => {
 
   const dispatch = useDispatch();
+
+  const { events, activeEvent } = useSelector( state => state.calendar )
 
   const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month');
 
@@ -44,6 +35,10 @@ export const CalendarScreen = () => {
 
   const onSelectEvent = (e) => {
     dispatch( eventSetActive(e) );
+  }
+
+  const onSelectSlot = (e) => {
+    dispatch( eventCleanActive() );
   }
 
   const onViewChange = (e) => {
@@ -61,6 +56,11 @@ export const CalendarScreen = () => {
     return { style }
   };
 
+  const addNewEvent = () => {
+    dispatch( eventCleanActive() )
+    dispatch( uiOpenModal() )
+  }
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Navbar/>
@@ -74,6 +74,8 @@ export const CalendarScreen = () => {
           eventPropGetter={eventStyleGetter}
           onDoubleClickEvent={onDoubleClick}
           onSelectEvent={onSelectEvent}
+          onSelectSlot={onSelectSlot}
+          selectable={true}
           onView={onViewChange}
           view={lastView}
           components={{
@@ -83,10 +85,16 @@ export const CalendarScreen = () => {
       </Box>
       <CalendarModal/>
       <Tooltip title="Add Event" placement="top">
-        <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 0, right: 0, mr: 5, mb: 5}} onClick={(e) => dispatch( uiOpenModal() )}>
+        <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 0, right: 0, mr: 5, mb: 5}} onClick={addNewEvent}>
           <AddIcon />
         </Fab>
       </Tooltip>
+      { activeEvent && (
+        <Fab color="secondary" aria-label="delete" sx={{ position: 'fixed', bottom: 0, right: 0, mr: 5, mb: 13}} 
+          onClick={() => dispatch( eventDeleted() )}>
+          <DeleteIcon />
+        </Fab>
+      )}
     </Box>
   )
 }

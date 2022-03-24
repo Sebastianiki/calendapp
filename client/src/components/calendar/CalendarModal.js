@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
@@ -14,28 +14,38 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import SaveIcon from '@mui/icons-material/Save';
 import moment from 'moment';
 import { uiCloseModal } from '../../actions/ui';
+import { eventAddNew, eventCleanActive, eventUpdated } from '../../actions/events';
 
 const now = moment().minutes(0).seconds(0).add(1,'hours')
+
+const initEvent = {
+  title: '',
+  notes: '',
+  start: now.toDate(),
+  end: now.add(1,'hours').toDate()
+}
 
 export const CalendarModal = () => {
 
   const { modalOpen } = useSelector( state => state.ui )
+  const { activeEvent } = useSelector( state => state.calendar )
   const dispatch = useDispatch();
 
   const [startDate, setStartDate] = useState(now.toDate())
   const [endDate, setEndDate] = useState(now.add(1,'hours').toDate())
-  const [formValues, setFormValues] = useState({
-    title: '',
-    notes: '',
-    start: startDate,
-    end: endDate
-  })
+  const [formValues, setFormValues] = useState(initEvent)
   const [errorsForm, setErrorsForm] = useState({
     title: { error: false, msg: ''},
     end: { error: false, msg: ''},
   })
 
   const { title, notes, start, end} = formValues;
+
+  useEffect(() => {
+    if( activeEvent ) setFormValues(activeEvent)
+    else setFormValues(initEvent)
+  }, [activeEvent])
+  
 
   const handleTextFieldChange = ({ target }) => {
     setFormValues({
@@ -66,17 +76,23 @@ export const CalendarModal = () => {
       title: { error: false, msg: ''},
       end: { error: false, msg: ''},
     })
+
+    if( activeEvent ) dispatch( eventUpdated(formValues));
+    else dispatch(eventAddNew({ ...formValues, id: new Date().getTime(), user: {id: '123', name: 'Sebastian' } }))
+    handleCloseModal();
   }
 
   const handleCloseModal = () => {
-    dispatch( uiCloseModal() )
+    setFormValues(initEvent);
+    dispatch( eventCleanActive() );
+    dispatch( uiCloseModal() );
   }
 
   return (
     <div>
       <LocalizationProvider dateAdapter={DateAdapter}>
       <Dialog open={modalOpen} onClose={handleCloseModal}>
-        <DialogTitle sx={{ textAlign:'center'}}>Nuevo Evento</DialogTitle>
+        <DialogTitle sx={{ textAlign:'center'}}>{ activeEvent ? 'Editar evento' : 'Nuevo Evento'}</DialogTitle>
         <Box sx={{ mx: 3, display:'flex', flexDirection: 'column', width:'350px'}}>
           <DateTimePicker
             renderInput={(props) => 
