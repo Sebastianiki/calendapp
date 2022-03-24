@@ -3,8 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 const path = require('path');
-const postRoutes = require('./routes/posts');
-const authRoutes = require('./routes/auth')
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -19,7 +18,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 };
 
-app.use('/api/posts', postRoutes);
 app.use('/api/auth', authRoutes);
 
 
