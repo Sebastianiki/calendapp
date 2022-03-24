@@ -4,14 +4,14 @@ const { generateJWT } = require('../helpers/jwt')
 
 exports.createUser = async (req, res) => {
   try{
-    let { email, password } = req.body;
+    let { email, password, name } = req.body;
     let user = await User.findOne({ where: { email } });
 
     if( user ) return res.status(400).json({ error: true, msg: 'Ya existe un usuario con ese correo electronico'});
 
     const salt = bcrypt.genSaltSync();
     password = bcrypt.hashSync( password, salt );
-    user = await User.create({ email, password });
+    user = await User.create({ email, password, name });
 
     const token = await generateJWT(user.id)
 
