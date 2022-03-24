@@ -4,6 +4,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 const path = require('path');
 const authRoutes = require('./routes/auth');
+const eventRoutes = require('./routes/event');
 
 const app = express();
 
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'production') {
 };
 
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
 
 
 
