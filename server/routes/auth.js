@@ -1,8 +1,12 @@
+/* 
+  Event Routes
+  /api/auth
+*/
 const express = require('express');
 const { check } = require('express-validator')
 const { validateFields } = require('../middlewares/validate-fields')
 const { validateJWT } = require('../middlewares/validate-jwt')
-const userController = require('../controllers/user');
+const { createUser, login, renewJWT } = require('../controllers/user');
 const router = express.Router();
 
 router.post(
@@ -18,7 +22,7 @@ router.post(
     }),
     validateFields
   ],
-  userController.createUser
+  createUser
 );
 
 router.post(
@@ -28,13 +32,13 @@ router.post(
     check('password', 'El password es obligatario').not().isEmpty(),
     validateFields
   ],
-  userController.login
+  login
 );
 
 router.get(
   '/renewjwt',
   validateJWT,
-  userController.renewJWT
+  renewJWT
 );
 
 module.exports = router;
