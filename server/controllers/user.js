@@ -31,17 +31,19 @@ exports.login = async (req, res) => {
   try{
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-    if( !user ) return res.status(400).json({ error: true, msg: 'correo malo'});
+    if( !user ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
 
     const validatePassword = bcrypt.compareSync( password, user.password );
-    if( !validatePassword ) return res.status(400).json({ error: true, msg: 'password mala'});
+    if( !validatePassword ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
 
     const token = await generateJWT(user.id)
 
     res.status(200).json({
       error: false,
       msg: 'Usuario logeado exitosamente.',
-      token
+      token,
+      userId: user.id,
+      name: user.name
     });
   }catch(error){
     console.log(error);
