@@ -26,7 +26,7 @@ router.post(
 );
 
 router.post(
-  '/login',
+  '/',
   [
     check('email', 'El email es obligatario').isEmail(),
     check('password', 'El password es obligatario').not().isEmpty(),
