@@ -1,54 +1,72 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
 import {
   Avatar,
   Button,
   CssBaseline,
-  TextField,
   Box,
   Typography,
   Container,
   Divider,
   Grid,
 } from '@mui/material';
+import Textfield from '../ui/forms/Textfield';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useForm } from '../../hooks/useForm'
-import { startLogin } from '../../actions/auth';
+import { authLogin, authRegister } from '../../actions/auth';
+import SubmitButton from '../ui/forms/SubmitButton';
 
 export const LoginScreen = () => {
 
+  const { loginValidation, registerValidation } = useSelector( state => state.auth )
+  
   const dispatch = useDispatch();
 
-  const [ formLoginValues, handleLoginInputChange ] = useForm({
-    lEmail: 'hola@sebastianreyes.cl',
-    lPassword: 'Seba133xd#$'
-  });
-
-  const [ formRegisterValues, handleRegisterInputChange ] = useForm({
-    rName: 'Sebastian 2',
-    rEmail: 'contacto@sebastianreyes.cl',
-    rPassword: 'Seba133xd#$',
-    rConfirmPassword: 'Seba133xd#$'
-  });
-
-  const [errorsRegisterForm, setErrorsRegisterForm] = useState({
-    lEmail : { error: false, msg: ''},
-    lPassword : { error: false, msg: ''}
-  })
-
-  const { lEmail, lPassword } = formLoginValues;
-  const { rName, rEmail, rPassword, rConfirmPassword } = formRegisterValues;
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log(lEmail.length);
-    if(lEmail.length === 0) setErrorsRegisterForm({...errorsRegisterForm, lEmail: { error:true, msg: 'Email obligatorio'}})
-    dispatch( startLogin(lEmail, lPassword) );
+  const handleLogin = ({ lEmail, lPassword }) => {
+    dispatch( authLogin(lEmail, lPassword) );
   }
 
-  const handleRegister = (e) => {
-    e.preventDefault();
+  const handleRegister = ({ rName, rEmail, rPassword }) => {
+    dispatch( authRegister(rName, rEmail, rPassword) );
   }
+
+  const initialLoginFormState = {
+    lEmail: '',
+    lPassword: ''
+  }
+
+  const loginFormValidation = Yup.object().shape({
+    lEmail: Yup.string()
+      .required('Required')
+      .email('Email invalid'),
+    lPassword: Yup.string()
+      .required('Required'),
+  });
+
+  const initialRegisterFormState = {
+    rName: '',
+    rEmail: '',
+    rPassword: '',
+    rConfirmPassword: ''
+  }
+
+  const registerFormValidation = Yup.object().shape({
+    rName: Yup.string()
+      .required('Required'),
+    rEmail: Yup.string()
+      .required('Required')
+      .email('Email invalid'),
+    rPassword: Yup.string()
+      .required('Required')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      ),
+    rConfirmPassword: Yup.string()
+      .required('Required')
+      .oneOf([Yup.ref("rPassword"), null], "Passwords must match")
+  });
   
   return (
     <Container component="main">
@@ -65,43 +83,31 @@ export const LoginScreen = () => {
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" sx={{ mb: 5}}>
               INGRESO
             </Typography>
-            <Box component="form" onSubmit={ handleLogin } >
-              <TextField
-                error= { errorsRegisterForm.lEmail.error }
-                helperText= { errorsRegisterForm.lEmail.msg }
-                margin="normal"
-                fullWidth
-                id="lEmail"
-                label="Email Address"
-                type="email"
-                autoFocus
-                name="lEmail"
-                value={ lEmail }
-                onChange= { handleLoginInputChange }
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Password"
-                type="password"
-                id="lPassword"
-                name="lPassword"
-                value={ lPassword }
-                onChange= { handleLoginInputChange }
-              />
-              <Button
-                type='submit'
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3 }}
-              >
-                INICIAR SESION
-              </Button>
-            </Box>
+            <Formik
+              initialValues={{...initialLoginFormState}}
+              validationSchema={loginFormValidation}
+              onSubmit={values => {handleLogin(values)}}
+            >
+              <Form>
+                <Textfield
+                  name='lEmail'
+                  label='Email'
+                  type='email'
+                  error={loginValidation.error}
+                />
+                <Textfield
+                  name='lPassword'
+                  label='Password'
+                  type='password'
+                  error={loginValidation.error}
+                  helperText={loginValidation.msg}
+                />
+                <SubmitButton sx={{ mt: 2 }}>INICIAR SESION</SubmitButton>
+              </Form>
+            </Formik>
           </Box>
         </Grid>
         <Grid item xs={2}>
@@ -110,7 +116,7 @@ export const LoginScreen = () => {
           </Divider>
         </Grid>
         <Grid item xs={5}>
-          <Box
+        <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -120,64 +126,39 @@ export const LoginScreen = () => {
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" sx={{ mb: 5}}>
               REGISTRO
             </Typography>
-            <Box component="form" onSubmit={handleRegister}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="rName"
-                label="Name"
-                autoFocus
-                name="rName"
-                value={rName}
-                onChange={handleRegisterInputChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="rEmail"
-                label="Email Address"
-                type="email"
-                autoFocus
-                name="rEmail"
-                value={rEmail}
-                onChange={handleRegisterInputChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="rPassword"
-                label="Password"
-                autoFocus
-                name="rPassword"
-                value={rPassword}
-                onChange={handleRegisterInputChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="rConfirmPassword"
-                label="Confirm Password"
-                autoFocus
-                name="rConfirmPassword"
-                value={rConfirmPassword}
-                onChange={handleRegisterInputChange}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3 }}
-              >
-                REGISTRARSE
-              </Button>
-            </Box>
+            <Formik
+              initialValues={{...initialRegisterFormState}}
+              validationSchema={registerFormValidation}
+              onSubmit={values => handleRegister(values) }
+            >
+              <Form>
+                <Textfield
+                  name='rName'
+                  label='Name'
+                />
+                <Textfield
+                  name='rEmail'
+                  label='Email'
+                  type='email'
+                  error={ registerValidation.error }
+                  helperText={ registerValidation.msg }
+                />
+                <Textfield
+                  name='rPassword'
+                  label='Password'
+                  type='password'
+                />
+                <Textfield
+                  name='rConfirmPassword'
+                  label='Confirm password'
+                  type='password'
+                />
+                <SubmitButton sx={{ mt: 2 }}>INICIAR SESION</SubmitButton>
+              </Form>
+            </Formik>
           </Box>
         </Grid>
       </Grid>
