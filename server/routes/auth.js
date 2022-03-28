@@ -10,7 +10,7 @@ const { createUser, login, renewJWT } = require('../controllers/user');
 const router = express.Router();
 
 router.post(
-  '/newuser', 
+  '/register', 
   [
     check('email', 'El email es obligatario').isEmail(),
     check('password', 'Contraseña insegura, debe tener al menos 8 letras, una mayuscula, un numero y un simbolo').isStrongPassword({
