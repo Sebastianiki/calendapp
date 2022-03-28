@@ -18,8 +18,8 @@ exports.createUser = async (req, res) => {
     res.status(200).json({
         error: false,
         msg: 'Usuario registrado exitosamente.',
-        user,
-        token
+        token,
+        user
     });
   }catch(error){
     console.log(error);
@@ -37,13 +37,12 @@ exports.login = async (req, res) => {
     if( !validatePassword ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
 
     const token = await generateJWT(user.id)
-
+    
     res.status(200).json({
       error: false,
       msg: 'Usuario logeado exitosamente.',
       token,
-      userId: user.id,
-      name: user.name
+      user
     });
   }catch(error){
     console.log(error);
