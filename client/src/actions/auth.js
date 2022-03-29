@@ -49,17 +49,13 @@ const registerFail = (error) => ({ type: types.authRegisterFail, payload: error 
 
 export const checkJWT = () => {
   return async(dispatch) => {
-    console.log('llamo el check');
     const resp = await axiosWT.get('auth/renewjwt')
-    console.log(resp);
     const { error, data } = resp;
     if(error){
-      localStorage.removeItem('token');
-      localStorage.removeItem('token-init-date')
-      dispatch( checkJWTFail() )
+      localStorage.clear();
+      dispatch( logOut() );
     } else {
       const { token, user } = data
-      console.log(user);
       localStorage.setItem('token', token);
       localStorage.setItem('token-init-date', new Date().getTime() );
       dispatch( checkJWTSuccess(user) );
@@ -69,5 +65,11 @@ export const checkJWT = () => {
 
 export const checkJWTSuccess = (user) => ({ type: types.authCheckJWTSuccess, payload: user })
 
-export const checkJWTFail = () => ({ type: types.authCheckJWTFail })
+export const authLogOut = () => {
+  return (dispatch) => {
+    localStorage.clear();
+    dispatch( logOut() );
+  }
+}
 
+const logOut = () => ({ type: types.authLogout })

@@ -10,7 +10,6 @@ export const types = {
 
   authCheckJWT: '[auth] Check login state',
   authCheckJWTSuccess: '[auth] Check JWT success',
-  authCheckJWTFail: '[auth] Check JWT fail',
   authLogin: '[auth] Login',
   authLoginSuccess: '[auth] Login success',
   authLoginFail: '[auth] Login fail',

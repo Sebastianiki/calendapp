@@ -56,7 +56,7 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         user: action.payload
       }
-    case types.authCheckJWTFail:
+    case types.authLogout:
       return {
         ...state,
         user: null
