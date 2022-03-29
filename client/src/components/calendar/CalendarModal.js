@@ -97,7 +97,7 @@ export const CalendarModal = () => {
           <DateTimePicker
             renderInput={(props) => 
               <TextField
-              margin="normal"
+                margin="normal"
                 {...props}
               />
             }
@@ -112,7 +112,6 @@ export const CalendarModal = () => {
             }}
           />
           <DateTimePicker
-            
             renderInput={(props) => 
               <TextField
                 margin="normal"
