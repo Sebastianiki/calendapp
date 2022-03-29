@@ -15,11 +15,13 @@ exports.createUser = async (req, res) => {
 
     const token = await generateJWT(user.id)
 
+    const userValidated = await User.scope('withOutPassword').findByPk(user.id);
+
     res.status(200).json({
         error: false,
         msg: 'Usuario registrado exitosamente.',
         token,
-        user
+        user : userValidated
     });
   }catch(error){
     console.log(error);
@@ -36,13 +38,16 @@ exports.login = async (req, res) => {
     const validatePassword = bcrypt.compareSync( password, user.password );
     if( !validatePassword ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
 
+    
     const token = await generateJWT(user.id)
+
+    const userValidated = await User.scope('withOutPassword').findByPk(user.id)
     
     res.status(200).json({
       error: false,
       msg: 'Usuario logeado exitosamente.',
       token,
-      user
+      user : userValidated
     });
   }catch(error){
     console.log(error);
@@ -54,11 +59,13 @@ exports.renewJWT = async (req, res) => {
   try{
     const { userId } = req
     const token = await generateJWT(userId)
+    const user = await User.scope('withOutPassword').findByPk(userId);
 
     res.status(200).json({
       error: false,
       msg: 'renewJWT',
-      token
+      token,
+      user
     });
     
   }catch(error){
