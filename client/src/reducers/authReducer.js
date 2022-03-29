@@ -51,6 +51,16 @@ export const authReducer = (state = initialState, action) => {
         registerValidation: {...action.payload},
         loading: false,
       }
+    case types.authCheckJWTSuccess:
+      return {
+        ...state,
+        user: action.payload
+      }
+    case types.authCheckJWTFail:
+      return {
+        ...state,
+        user: null
+      }
     default:
       return state
   }
