@@ -1,28 +1,25 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
 import {
   Box,
-  Button,
-  TextField,
   Dialog,
-  DialogActions,
   DialogTitle
 } from '@mui/material';
-import DateAdapter from '@mui/lab/AdapterMoment';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateTimePicker from '@mui/lab/DateTimePicker';
 import SaveIcon from '@mui/icons-material/Save';
 import moment from 'moment';
 import { uiCloseModal } from '../../actions/ui';
 import { eventAddNew, eventCleanActive, eventUpdated } from '../../actions/events';
-
-const now = moment().minutes(0).seconds(0).add(1,'hours')
+import Textfield from '../ui/forms/Textfield';
+import SubmitButton from '../ui/forms/SubmitButton';
+import DateTimePickerCustom from '../ui/forms/DateTimePicker';
 
 const initEvent = {
   title: '',
   notes: '',
-  start: now.toDate(),
-  end: now.add(1,'hours').toDate()
+  start: moment().second(0).add(1,'minutes'),
+  end: moment().second(0).add(16,'minutes')
 }
 
 export const CalendarModal = () => {
@@ -31,132 +28,74 @@ export const CalendarModal = () => {
   const { activeEvent } = useSelector( state => state.calendar )
   const dispatch = useDispatch();
 
-  const [startDate, setStartDate] = useState(now.toDate())
-  const [endDate, setEndDate] = useState(now.add(1,'hours').toDate())
-  const [formValues, setFormValues] = useState(initEvent)
-  const [errorsForm, setErrorsForm] = useState({
-    title: { error: false, msg: ''},
-    end: { error: false, msg: ''},
-  })
-
-  const { title, notes, start, end} = formValues;
-
-  useEffect(() => {
-    if( activeEvent ) setFormValues(activeEvent)
-    else setFormValues(initEvent)
-  }, [activeEvent])
-  
-
-  const handleTextFieldChange = ({ target }) => {
-    setFormValues({
-      ...formValues,
-      [target.name]: target.value
-    })
-  }
-
-  const handleSubmitForm = () => {
-
-    const momentStart = moment(start);
-    const momentEnd = moment(end);
-
-    let errors = {
-      title: { error: false, msg: ''},
-      end: { error: false, msg: ''},
-    }
-
-    if(formValues.title === '') errors = { ...errors, title: { error: true, msg: 'El titulo es obligatorio' } }
-    if(momentStart.isSameOrAfter(momentEnd)) errors = { ...errors, end: { error: true, msg: 'La fecha no puede ser menor a la fecha de inicio' } }
-
-    if(errors.title.error || errors.end.error) {
-      setErrorsForm(errors);
-      return
-    }
-
-    setErrorsForm({
-      title: { error: false, msg: ''},
-      end: { error: false, msg: ''},
-    })
-
-    if( activeEvent ) dispatch( eventUpdated(formValues));
-    else dispatch(eventAddNew({ ...formValues, id: new Date().getTime(), user: {id: '123', name: 'Sebastian' } }))
+  const handleSubmitForm = (values) => {
+    if( activeEvent ) dispatch( eventUpdated(values));
+    else dispatch(eventAddNew({ ...values, id: new Date().getTime(), user: {id: '123', name: 'Sebastian' } }))
     handleCloseModal();
   }
 
   const handleCloseModal = () => {
-    setFormValues(initEvent);
     dispatch( eventCleanActive() );
     dispatch( uiCloseModal() );
   }
 
+  const initialFormState = activeEvent ? activeEvent : initEvent
+
+  const formValidation = Yup.object().shape({
+    title: Yup.string()
+      .required('Required'),
+    start: Yup.string()
+      .nullable()
+      .required('Fecha de inicio obligatoria')
+      .test('start','Formato de fecha incorrecto', (value) => {
+        return moment(value).isValid()
+      })
+      .test('start','La fecha de inicio no puede ser menor a la hora actual', (value) => {
+        return moment(value).isAfter(moment(Date.now()))
+      }),
+    end: Yup.string()
+      .nullable()
+      .required('Fecha de termino obligatoria')
+      .test('end','Formato de fecha incorrecto', (value) => {
+        return moment(value).isValid()
+      })
+      .test('end','La fecha de termino no puede ser menor a la fecha de inicio', function(value) {
+        return moment(value).isAfter(moment(this.parent.start))
+      })
+  });
+
   return (
-    <div>
-      <LocalizationProvider dateAdapter={DateAdapter}>
-      <Dialog open={modalOpen} onClose={handleCloseModal}>
-        <DialogTitle sx={{ textAlign:'center'}}>{ activeEvent ? 'Editar evento' : 'Nuevo Evento'}</DialogTitle>
-        <Box sx={{ mx: 3, display:'flex', flexDirection: 'column', width:'350px'}}>
-          <DateTimePicker
-            renderInput={(props) => 
-              <TextField
-                margin="normal"
-                {...props}
-              />
-            }
-            label="FECHA Y HORA - INICIO"
-            value={startDate}
-            onChange={(newValue) => {
-              setStartDate(newValue);
-              setFormValues({
-                ...formValues,
-                start: newValue.toDate()
-              })
-            }}
-          />
-          <DateTimePicker
-            renderInput={(props) => 
-              <TextField
-                margin="normal"
-                error={true}
-                helperText={errorsForm.end.msg}
-                {...props}
-              />
-            }
-            label="FECHA Y HORA - FIN"
-            value={endDate}
-            onChange={(newValue) => {
-              setEndDate(newValue);
-              setFormValues({
-                ...formValues,
-                end: newValue.toDate()
-              });
-            }}
-          />
-          <TextField
-            error={errorsForm.title.error}
-            helperText={errorsForm.title.msg}
-            name='title'
-            label="TITULO"
-            margin='normal'
-            value={title}
-            onChange={handleTextFieldChange}
-          />
-          <TextField
-            name='notes'
-            label="NOTAS"
-            multiline
-            rows={4}
-            margin='normal'
-            helperText="Informacion Adicional"
-            value={notes}
-            onChange={handleTextFieldChange}
-          />
-        </Box>
-        <DialogActions sx={{ mx: 3, mb: 1 }}>
-          <Button fullWidth variant="outlined" startIcon={<SaveIcon />} onClick={handleSubmitForm}>
-            GUARDAR
-          </Button>
-        </DialogActions>
-      </Dialog>
-      </LocalizationProvider>
-    </div>
+    <Dialog open={modalOpen} onClose={handleCloseModal}>
+      <DialogTitle sx={{ textAlign:'center'}}>{ activeEvent ? 'Editar evento' : 'Nuevo Evento'}</DialogTitle>
+      <Box sx={{ mx: 3, mb: 2, display:'flex', flexDirection: 'column', width:'350px'}}>
+        <Formik
+          initialValues={{...initialFormState}}
+          validationSchema={formValidation}
+          onSubmit={values => {handleSubmitForm(values)}}
+        >
+          <Form>
+            <DateTimePickerCustom
+              name='start'
+              label='FECHA Y HORA DE INICIO'
+            />
+            <DateTimePickerCustom
+              name='end'
+              label='FECHA Y HORA DE FIN'
+            />
+            <Textfield
+              name='title'
+              label='TITULO'
+            />
+            <Textfield
+              name='notes'
+              label='Informacion adicional'
+              multiline
+              rows={4}
+            />
+            <SubmitButton startIcon={<SaveIcon />} sx={{ mt: 2 }} >GUARDAR</SubmitButton>
+          </Form>
+        </Formik>
+      </Box>
+    </Dialog>
   )
 }
