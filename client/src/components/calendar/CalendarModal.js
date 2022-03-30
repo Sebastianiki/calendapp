@@ -10,7 +10,7 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import moment from 'moment';
 import { uiCloseModal } from '../../actions/ui';
-import { eventAddNew, eventCleanActive, eventUpdated } from '../../actions/events';
+import { eventAddNew, eventCleanActive, eventUpdate } from '../../actions/events';
 import Textfield from '../ui/forms/Textfield';
 import SubmitButton from '../ui/forms/SubmitButton';
 import DateTimePickerCustom from '../ui/forms/DateTimePicker';
@@ -29,7 +29,7 @@ export const CalendarModal = () => {
   const dispatch = useDispatch();
 
   const handleSubmitForm = (values) => {
-    if( activeEvent ) dispatch( eventUpdated(values));
+    if( activeEvent ) dispatch( eventUpdate(values));
     else dispatch(eventAddNew(values))
     handleCloseModal();
   }
@@ -49,9 +49,6 @@ export const CalendarModal = () => {
       .required('Fecha de inicio obligatoria')
       .test('start','Formato de fecha incorrecto', (value) => {
         return moment(value).isValid()
-      })
-      .test('start','La fecha de inicio no puede ser menor a la hora actual', (value) => {
-        return moment(value).isAfter(moment(Date.now()))
       }),
     end: Yup.string()
       .nullable()

@@ -9,11 +9,6 @@ const initialState = {
 
 export const calendarReducer = (state = initialState, action ) => {
   switch(action.type){
-    case types.eventSetActive:
-      return {
-        ...state,
-        activeEvent: action.payload
-      }
     case types.getEvents:
       return {
         ...state,
@@ -46,15 +41,31 @@ export const calendarReducer = (state = initialState, action ) => {
         ...state,
         loading: false
       }
+    case types.eventUpdate:
+      return {
+        ...state,
+        loading: true
+      }
+    case types.eventUpdateSuccess:
+      return {
+        ...state,
+        loading: false,
+        events: state.events.map(e => e.id === action.payload.id ? action.payload : e)
+      }
+    case types.eventUpdateFail:
+      return {
+        ...state,
+        loading: false
+      }
+    case types.eventSetActive:
+      return {
+        ...state,
+        activeEvent: action.payload
+      }
     case types.eventCleanActive:
       return {
         ...state,
         activeEvent: null
-      }
-    case types.eventUpdated:
-      return {
-        ...state,
-        events: state.events.map(e => e.id === action.payload.id ? action.payload : e)
       }
     case types.eventDeleted:
       return {

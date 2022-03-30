@@ -1,4 +1,5 @@
 import axiosWT from "../config/axiosWithToken"
+import { stringToDate } from "../helpers/commonHelpers"
 import { types } from "../types/types"
 
 export const eventGetEvents = () => {
@@ -8,7 +9,8 @@ export const eventGetEvents = () => {
       const resp = await axiosWT.get('events');
       const { error, events} = resp.data
       if ( !error ) {
-        dispatch(getEventsSuccess(events))
+        const eventsWithDate = events.map((e) => ({ ...e, start: stringToDate(e.start), end: stringToDate(e.end) }) )
+        dispatch(getEventsSuccess(eventsWithDate))
       }
     } catch (error) {
       dispatch(getEventsFail())
@@ -27,7 +29,6 @@ export const eventAddNew = (values) => {
     dispatch(addNew());
     try {
       const resp = await axiosWT.post('events', values)
-      console.log(resp);
       const { error, event } = resp.data
       if( !error ) {
         dispatch( addNewSuccess(event) );
@@ -47,16 +48,34 @@ const addNewSuccess = (event) => ({
 
 const addNewFail = () => ({ type: types.eventAddNewFail })
 
+export const eventUpdate = (values) => {
+  return async(dispatch) => {
+    dispatch(update())
+    try {
+      const resp = await axiosWT.put(`events/${values.id}`, values)
+      let { error, event } = resp.data
+      if ( !error ) {
+        event.start = stringToDate(event.start)
+        event.end = stringToDate(event.end)
+        dispatch ( updateSuccess(event))
+      }
+    } catch (error) {
+      dispatch(updateFail());
+    }
+  }
+}
+
+const update = () => ({ type: types.eventUpdate })
+
+const updateSuccess = (event) => ({ type: types.eventUpdateSuccess, payload: event })
+
+const updateFail = () => ({ type: types.eventUpdateFail })
+
+export const eventDeleted = () => ({ type: types.eventDeleted })
+
 export const eventSetActive = (event) => ({
   type: types.eventSetActive,
   payload: event
 });
 
 export const eventCleanActive = () => ({ type: types.eventCleanActive });
-
-export const eventUpdated = (event) => ({
-  type: types.eventUpdated,
-  payload: event,
-})
-
-export const eventDeleted = () => ({ type: types.eventDeleted })

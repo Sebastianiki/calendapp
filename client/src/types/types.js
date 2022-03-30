@@ -10,7 +10,9 @@ export const types = {
   eventAddNewFail: '[event] Add new Fail',
   eventSetActive: '[event] Set active',
   eventCleanActive: '[event] Clean active',
-  eventUpdated: '[event] Event updated',
+  eventUpdate: '[event] Event update',
+  eventUpdateSuccess: '[event] Event update success',
+  eventUpdateFail: '[event] Event update fail',
   eventDeleted: '[event] Event deleted',
 
   authCheckJWT: '[auth] Check login state',
