@@ -8,7 +8,6 @@ exports.validateJWT = (req, res, next) => {
     const { userId } = jwt.verify(token, process.env.SECRET_JWT_SEED)
     req.userId = userId;
   }catch(error){
-    console.log(error)
     return res.status(401).json({error: true, msg: 'token no valido'})
   }
   next();
