@@ -1,4 +1,5 @@
-import { axiosWOT, axiosWT } from "../config/axios"
+import axiosWT from "../config/axiosWithToken";
+import axiosWOT from '../config/axios'
 import { types } from "../types/types";
 
 export const authLogin = (email, password) => {
