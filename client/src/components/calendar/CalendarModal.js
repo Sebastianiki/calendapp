@@ -18,8 +18,8 @@ import DateTimePickerCustom from '../ui/forms/DateTimePicker';
 const initEvent = {
   title: '',
   notes: '',
-  start: moment().second(0).add(1,'minutes'),
-  end: moment().second(0).add(16,'minutes')
+  start: moment().second(0).add(5,'minutes'),
+  end: moment().second(0).add(21,'minutes')
 }
 
 export const CalendarModal = () => {
@@ -30,7 +30,7 @@ export const CalendarModal = () => {
 
   const handleSubmitForm = (values) => {
     if( activeEvent ) dispatch( eventUpdated(values));
-    else dispatch(eventAddNew({ ...values, id: new Date().getTime(), user: {id: '123', name: 'Sebastian' } }))
+    else dispatch(eventAddNew(values))
     handleCloseModal();
   }
 

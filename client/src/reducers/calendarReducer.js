@@ -2,19 +2,9 @@ import moment from "moment";
 import { types } from "../types/types"
 
 const initialState = {
-  events: [{
-    id: new Date().getTime(),
-    title: 'Birthday Mithos',
-    start: moment().toDate(),
-    end: moment().add( 2, 'hours').toDate(),
-    bgcolor: '#fafafa',
-    notes: 'buy cake',
-    user: {
-      id: '123',
-      name: 'Sebastian'
-    }
-  }],
-  activeEvent: null
+  events: [],
+  activeEvent: null,
+  loading: false
 };
 
 export const calendarReducer = (state = initialState, action ) => {
@@ -24,10 +14,37 @@ export const calendarReducer = (state = initialState, action ) => {
         ...state,
         activeEvent: action.payload
       }
+    case types.getEvents:
+      return {
+        ...state,
+        loading: true
+      }
+    case types.getEventsSuccess:
+      return {
+        ...state,
+        loading: false,
+        events: action.payload
+      }
+    case types.getEventsFail:
+      return {
+        ...state,
+        loading: false
+      }
     case types.eventAddNew:
       return {
         ...state,
-        events: [...state.events, action.payload]
+        loading: true
+      }
+    case types.eventAddNewSuccess:
+      return {
+        ...state,
+        events: [...state.events, action.payload],
+        loading: false
+      }
+    case types.eventAddNewFail:
+      return {
+        ...state,
+        loading: false
       }
     case types.eventCleanActive:
       return {

@@ -11,7 +11,6 @@ exports.getEvents = async (req, res) => {
     });
     res.status(200).json({
       error: false,
-      msg: 'getEventos',
       events
     });
   }catch(error){
@@ -22,11 +21,24 @@ exports.getEvents = async (req, res) => {
 
 exports.newEvent = async (req, res) => {
   try {
-    const event = await Event.create({...req.body, userId: req.userId});
+    let event = await Event.create({...req.body, userId: req.userId});
+    event = await Event.findOne({
+      where: {
+        id: event.id,
+      },
+      include: {
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password']
+        }
+      }
+    })
+
     res.status(200).json({
       error: false,
-      msg: 'newEvent',
-  });
+      event
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Ha ocurrido un error');
