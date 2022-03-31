@@ -30,8 +30,14 @@ export const eventAddNew = (values) => {
     dispatch(addNew());
     try {
       const resp = await axiosWT.post('events', values)
-      const { error, event } = resp.data
+      const { error, event, msg } = resp.data
       if( !error ) {
+        const snackBar = {
+          show: true,
+          severity: 'success',
+          msg,
+        }
+        dispatch(uiOpenSnackBar(snackBar))
         dispatch( addNewSuccess(event) );
       }
     } catch (error) {
@@ -51,10 +57,16 @@ export const eventUpdate = (values) => {
     dispatch(update())
     try {
       const resp = await axiosWT.put(`events/${values.id}`, values)
-      let { error, event } = resp.data
+      let { error, event, msg } = resp.data
       if ( !error ) {
         event.start = stringToDate(event.start)
         event.end = stringToDate(event.end)
+        const snackBar = {
+          show: true,
+          severity: 'success',
+          msg,
+        }
+        dispatch(uiOpenSnackBar(snackBar))
         dispatch ( updateSuccess(event))
       }
     } catch (error) {
@@ -81,8 +93,14 @@ export const eventDelete = (id) => {
     dispatch(deleteEvent())
     try {
       const resp = await axiosWT.delete(`events/${id}`);
-      let { error } = resp.data;
+      let { error, msg } = resp.data;
       if ( !error ) {
+        const snackBar = {
+          show: true,
+          severity: 'success',
+          msg,
+        }
+        dispatch(uiOpenSnackBar(snackBar))
         dispatch(deleteEventSuccess());
       }
     } catch (error) {

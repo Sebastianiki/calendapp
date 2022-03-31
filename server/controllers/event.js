@@ -20,6 +20,7 @@ exports.newEvent = async (req, res) => {
 
     res.status(200).json({
       error: false,
+      msg: 'Evento añadido correctamente',
       event
     });
   } catch (error) {
