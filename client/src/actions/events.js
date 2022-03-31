@@ -1,6 +1,7 @@
 import axiosWT from "../config/axiosWithToken"
 import { stringToDate } from "../helpers/commonHelpers"
 import { types } from "../types/types"
+import { uiOpenSnackBar } from "./ui"
 
 export const eventGetEvents = () => {
   return async(dispatch) => {
@@ -41,10 +42,7 @@ export const eventAddNew = (values) => {
 
 const addNew = () => ({ type: types.eventAddNew })
 
-const addNewSuccess = (event) => ({
-  type: types.eventAddNewSuccess,
-  payload: event
-});
+const addNewSuccess = (event) => ({ type: types.eventAddNewSuccess, payload: event });
 
 const addNewFail = () => ({ type: types.eventAddNewFail })
 
@@ -60,6 +58,13 @@ export const eventUpdate = (values) => {
         dispatch ( updateSuccess(event))
       }
     } catch (error) {
+      const { msg } = error.response.data
+      const snackBar = {
+        show: true,
+        severity: 'error',
+        msg,
+      }
+      dispatch(uiOpenSnackBar(snackBar))
       dispatch(updateFail());
     }
   }
@@ -71,7 +76,33 @@ const updateSuccess = (event) => ({ type: types.eventUpdateSuccess, payload: eve
 
 const updateFail = () => ({ type: types.eventUpdateFail })
 
-export const eventDeleted = () => ({ type: types.eventDeleted })
+export const eventDelete = (id) => {
+  return async(dispatch) => {
+    dispatch(deleteEvent())
+    try {
+      const resp = await axiosWT.delete(`events/${id}`);
+      let { error } = resp.data;
+      if ( !error ) {
+        dispatch(deleteEventSuccess());
+      }
+    } catch (error) {
+      const { msg } = error.response.data
+      const snackBar = {
+        show: true,
+        severity: 'error',
+        msg,
+      }
+      dispatch(uiOpenSnackBar(snackBar))
+      dispatch(deleteEventFail());
+    }
+  }
+}
+
+const deleteEvent = () => ({ type: types.eventDelete })
+
+const deleteEventSuccess = () => ({ type: types.eventDeleteSuccess })
+
+const deleteEventFail = () => ({ type: types.eventDeleteFail })
 
 export const eventSetActive = (event) => ({
   type: types.eventSetActive,

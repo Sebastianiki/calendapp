@@ -1,6 +1,8 @@
 export const types = {
   uiOpenModal: '[ui] Open modal',
   uiCloseModal: '[ui] Close modal',
+  uiOpenSnackBar: '[ui] Open SnackBar',
+  uiCloseSnackBar: '[ui] Close CloseBar',
 
   getEvents: '[event] Get events from api',
   getEventsSuccess: '[event] Get events Success',
@@ -13,7 +15,9 @@ export const types = {
   eventUpdate: '[event] Event update',
   eventUpdateSuccess: '[event] Event update success',
   eventUpdateFail: '[event] Event update fail',
-  eventDeleted: '[event] Event deleted',
+  eventDelete: '[event] Event delete',
+  eventDeleteSuccess: '[event] Event delete success',
+  eventDeleteFail: '[event] Event delete fail',
 
   authCheckJWT: '[auth] Check login state',
   authCheckJWTSuccess: '[auth] Check JWT success',

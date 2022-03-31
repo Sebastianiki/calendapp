@@ -67,11 +67,23 @@ export const calendarReducer = (state = initialState, action ) => {
         ...state,
         activeEvent: null
       }
-    case types.eventDeleted:
+    case types.eventDelete:
+      return {
+        ...state,
+        loading: true
+      }
+    case types.eventDeleteSuccess:
       return {
         ...state,
         events: state.events.filter(e => e.id !== state.activeEvent.id),
-        activeEvent: null
+        activeEvent: null,
+        loading: false
+      }
+    case types.eventDeleteFail:
+      return {
+        ...state,
+        activeEvent: null,
+        loading: false
       }
     default:
       return state;
