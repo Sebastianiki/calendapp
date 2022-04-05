@@ -13,7 +13,10 @@ const router = express.Router();
 
 router.use(validateJWT);
 
-router.get('/', getEvents);
+router.get(
+  '/',
+  getEvents
+);
 
 router.post(
   '/',
@@ -23,7 +26,8 @@ router.post(
     check('end', 'Fecha de termino es obligatoria').custom(isDate),
     validateFields
   ],
-  newEvent);
+  newEvent
+);
 
 router.put(
   '/:id',
@@ -33,8 +37,12 @@ router.put(
     check('end', 'Fecha de termino es obligatoria').custom(isDate),
     validateFields
   ],
-  editEvent);
+  editEvent
+);
 
-router.delete('/:id', deleteEvent)
+router.delete(
+  '/:id',
+  deleteEvent
+);
 
 module.exports = router;

@@ -5,6 +5,7 @@ require('dotenv').config();
 const path = require('path');
 const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/event');
+const userRoutes = require('./routes/user')
 
 const app = express();
 
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/users', userRoutes)
 
 
 

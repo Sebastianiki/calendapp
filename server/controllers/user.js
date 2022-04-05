@@ -28,45 +28,39 @@ exports.createUser = async (req, res) => {
   }
 }
 
-exports.login = async (req, res) => {
-  try{
-    const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
-    if( !user ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
-
-    const validatePassword = bcrypt.compareSync( password, user.password );
-    if( !validatePassword ) return res.status(400).json({ error: true, msg: 'Correo y/o password incorrectos'});
-
-    
-    const token = await generateJWT(user.id)
-
-    const userValidated = await User.scope('withOutPassword').findByPk(user.id)
-    
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.scope('withOutPassword').findAll()
     res.status(200).json({
       error: false,
-      msg: 'Usuario logeado exitosamente.',
-      token,
-      user : userValidated
-    });
-  }catch(error){
+      users
+    })
+  } catch (error) {
+    console.log(error);
     res.status(500).send('Ha ocurrido un error');
   }
 }
 
-exports.renewJWT = async (req, res) => {
-  try{
-    const { userId } = req
-    const token = await generateJWT(userId)
-    const user = await User.scope('withOutPassword').findByPk(userId);
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const user = await User.findByPk(id)
+
+    if(!user) {
+      return res.status(404).json({
+        error: true,
+        msg: 'usuario no encontrado'
+      })
+    }
+     
+    await User.destroy({ where : { id }, force: true })
 
     res.status(200).json({
       error: false,
-      msg: 'renewJWT',
-      token,
-      user
+      msg: 'usuario borrado exitosamente'
     });
-    
-  }catch(error){
+  } catch (error) {
     res.status(500).send('Ha ocurrido un error');
   }
 }
