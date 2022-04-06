@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/es'
@@ -6,17 +6,14 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import { Navbar } from '../ui/Navbar';
 import { messages } from '../../helpers/calendar-messages-es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { 
-  Box,
-  Fab,
-  Tooltip
-} from '@mui/material';
+import { Box, Fab, Tooltip } from '@mui/material';
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { uiOpenModal } from '../../actions/ui';
-import { eventCleanActive, eventSetActive, eventDeleted } from '../../actions/events';
+import { eventCleanActive, eventSetActive, eventDeleted, eventGetEvents, eventDelete } from '../../actions/events';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CustomSnackBar from '../ui/Snackbar';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment)
@@ -24,10 +21,13 @@ const localizer = momentLocalizer(moment)
 export const CalendarScreen = () => {
 
   const dispatch = useDispatch();
-
   const { events, activeEvent } = useSelector( state => state.calendar )
+  const { user } = useSelector( state => state.auth )
+  const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month');
 
-  const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month');
+  useEffect(() => {
+    dispatch( eventGetEvents() );
+  }, [])
 
   const onDoubleClick = (e) => {
     dispatch( uiOpenModal() );
@@ -42,13 +42,13 @@ export const CalendarScreen = () => {
   }
 
   const onViewChange = (e) => {
-    setlastView(e)
+    setLastView(e)
     localStorage.setItem('lastView', e);
   }
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     const style = {
-      backgroundColor: '#367CF7',
+      backgroundColor: event.userId === user.id ? '#367CF7' : '#465660',
       opacity: '0.8',
       display: 'block',
       color: 'white'
@@ -63,7 +63,8 @@ export const CalendarScreen = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <Navbar/>
+      <Navbar/>    
+      <CustomSnackBar/>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: 1 , mx: 5, my: 5 }}>
         <Calendar
           localizer={localizer}
@@ -91,7 +92,7 @@ export const CalendarScreen = () => {
       </Tooltip>
       { activeEvent && (
         <Fab color="secondary" aria-label="delete" sx={{ position: 'fixed', bottom: 0, right: 0, mr: 5, mb: 13}} 
-          onClick={() => dispatch( eventDeleted() )}>
+          onClick={() => dispatch( eventDelete(activeEvent.id) )}>
           <DeleteIcon />
         </Fab>
       )}

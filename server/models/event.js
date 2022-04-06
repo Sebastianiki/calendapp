@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Event extends Model {
     /**
@@ -11,6 +10,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Event.belongsTo(models.User, {as: 'user', foreignKey: 'userId'})
+      Event.addScope('defaultScope', {
+        include: [{
+          model: sequelize.models.User,
+          as: 'user',
+          attributes: {
+            exclude: ['password']
+          }
+        }],
+      });
     }
   }
   Event.init({
@@ -20,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     end: DataTypes.DATE,
   }, {
     sequelize,
-    modelName: 'Event',
+    modelName: 'Event'
   });
   return Event;
 };

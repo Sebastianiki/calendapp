@@ -2,48 +2,88 @@ import moment from "moment";
 import { types } from "../types/types"
 
 const initialState = {
-  events: [{
-    id: new Date().getTime(),
-    title: 'Birthday Mithos',
-    start: moment().toDate(),
-    end: moment().add( 2, 'hours').toDate(),
-    bgcolor: '#fafafa',
-    notes: 'buy cake',
-    user: {
-      id: '123',
-      name: 'Sebastian'
-    }
-  }],
-  activeEvent: null
+  events: [],
+  activeEvent: null,
+  loading: false
 };
 
 export const calendarReducer = (state = initialState, action ) => {
   switch(action.type){
-    case types.eventSetActive:
+    case types.getEvents:
       return {
         ...state,
-        activeEvent: action.payload
+        loading: true
+      }
+    case types.getEventsSuccess:
+      return {
+        ...state,
+        loading: false,
+        events: action.payload
+      }
+    case types.getEventsFail:
+      return {
+        ...state,
+        loading: false
       }
     case types.eventAddNew:
       return {
         ...state,
-        events: [...state.events, action.payload]
+        loading: true
+      }
+    case types.eventAddNewSuccess:
+      return {
+        ...state,
+        events: [...state.events, action.payload],
+        loading: false
+      }
+    case types.eventAddNewFail:
+      return {
+        ...state,
+        loading: false
+      }
+    case types.eventUpdate:
+      return {
+        ...state,
+        loading: true
+      }
+    case types.eventUpdateSuccess:
+      return {
+        ...state,
+        loading: false,
+        events: state.events.map(e => e.id === action.payload.id ? action.payload : e)
+      }
+    case types.eventUpdateFail:
+      return {
+        ...state,
+        loading: false
+      }
+    case types.eventSetActive:
+      return {
+        ...state,
+        activeEvent: action.payload
       }
     case types.eventCleanActive:
       return {
         ...state,
         activeEvent: null
       }
-    case types.eventUpdated:
+    case types.eventDelete:
       return {
         ...state,
-        events: state.events.map(e => e.id === action.payload.id ? action.payload : e)
+        loading: true
       }
-    case types.eventDeleted:
+    case types.eventDeleteSuccess:
       return {
         ...state,
         events: state.events.filter(e => e.id !== state.activeEvent.id),
-        activeEvent: null
+        activeEvent: null,
+        loading: false
+      }
+    case types.eventDeleteFail:
+      return {
+        ...state,
+        activeEvent: null,
+        loading: false
       }
     default:
       return state;
