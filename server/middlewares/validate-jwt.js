@@ -15,6 +15,7 @@ exports.validateJWT = (req, res, next) => {
 
 exports.validateDev = (req, res, next) => {
 
+  // just found your id in the database 
   const devIds = [1]
   const { userId } = req;
   const isDev = devIds.find(id => id === userId)
