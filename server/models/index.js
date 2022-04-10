@@ -11,6 +11,7 @@ const db = {};
 let sequelize;
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, config);
+  console.log(process.env.DATABASE_URL);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
@@ -32,6 +33,6 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+// db.Sequelize = Sequelize;
 
 module.exports = db;
