@@ -12,8 +12,10 @@ services:
     environment:
       - DB_HOST=postgres
       - SECRET_JWT_SEED=SecretPassword
+      - CHOKIDAR_USEPOLLING=true
     volumes:
-      - backend:/usr/src/app
+      - ./server:/app
+      - /app/node_modules
 
   client:
     container_name: calendapp-frontend
@@ -24,10 +26,10 @@ services:
     links:
       - server
     environment:
-      - CHOKIDAR_USEPOLLING=true
-    stdin_open: true
+      - REACT_APP_CHOKIDAR_USEPOLLING=true
     volumes:
-      - frontend:/usr/src/app
+      - ./client:/app
+      - /app/node_modules
 
   
   postgres:
@@ -44,5 +46,3 @@ services:
 
 volumes:
   data:
-  backend:
-  frontend:
