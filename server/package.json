@@ -4,17 +4,11 @@
   "description": "boiler plate to use with pern stack ( PosgreSQL - Express - React - Node )",
   "main": "index.js",
   "scripts": {
-    "build": "cd client && npm run build",
-    "install-client": "cd client && npm install",
-    "heroku-postbuild": "npm run install-client && npm run build",
-    "start": "node server/index.js",
-    "client": "cd client && npm start",
+    "start": "node index.js",
     "dev": "concurrently -n 'server,client' -c 'red,green' \"nodemon server/index.js\" \"npm run client\"",
-    "install-nodes": "npm install && npm run install-client",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "db:create" : "cd server && npx sequelize-cli db:create",
-    "db:migrate" : "cd server && npx sequelize-cli db:migrate",
-    "db:seed" : "cd server && npx sequelize-cli db:seed:all"
+    "db:create" : "npx sequelize-cli db:create",
+    "db:migrate" : "npx sequelize-cli db:migrate",
+    "db:seed" : "npx sequelize-cli db:seed:all"
   },
   "repository": {
     "type": "git",
