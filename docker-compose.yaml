@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  server:
+    container_name: calendapp-backend
+    build: ./server
+    restart : always
+    ports:
+      - "5000:5000"
+    links:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - SECRET_JWT_SEED=SecretPassword
+    volumes:
+      - backend:/usr/src/app
+
+  client:
+    container_name: calendapp-frontend
+    build: ./client
+    restart : always
+    ports:
+      - "3000:3000"
+    links:
+      - server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    volumes:
+      - frontend:/usr/src/app
+
+  
+  postgres:
+    container_name: calendapp-postgres
+    image: postgres:alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
+  backend:
+  frontend:

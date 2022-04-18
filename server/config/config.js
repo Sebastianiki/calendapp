@@ -1,9 +1,9 @@
 module.exports = {
   development: {
     username: "postgres",
-    password: "postgresql",
+    password: "postgres",
     database: "boilerpern",
-    host: "127.0.0.1",
+    host: process.env.DB_HOST,
     dialect: "postgres"
   },
   production: {
