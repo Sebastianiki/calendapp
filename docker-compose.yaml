@@ -12,7 +12,6 @@ services:
     environment:
       - DB_HOST=postgres
       - SECRET_JWT_SEED=SecretPassword
-      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./server:/app
       - backendnodes:/app/node_modules
@@ -27,6 +26,7 @@ services:
       - server
     environment:
       - REACT_APP_CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./client:/app
       - frontendnodes/app/node_modules
