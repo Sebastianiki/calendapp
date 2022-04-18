@@ -1,6 +1,11 @@
 # boiler-plate-pern
 boiler plate to use with pern stack ( PosgreSQL - Express - React - Node )
 
+
+
+Use Docker :
+
+
 HOW TO RUN APP IN DEVELOPMENT
 
 First of all you have to install :
