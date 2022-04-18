@@ -15,7 +15,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./server:/app
-      - /app/node_modules
+      - backendnodes:/app/node_modules
 
   client:
     container_name: calendapp-frontend
@@ -29,7 +29,7 @@ services:
       - REACT_APP_CHOKIDAR_USEPOLLING=true
     volumes:
       - ./client:/app
-      - /app/node_modules
+      - frontendnodes/app/node_modules
 
   
   postgres:
@@ -46,3 +46,5 @@ services:
 
 volumes:
   data:
+  backendnodes:
+  frontendnodes:
