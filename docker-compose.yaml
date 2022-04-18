@@ -4,7 +4,6 @@ services:
   server:
     container_name: calendapp-backend
     build: ./server
-    restart : always
     ports:
       - "5000:5000"
     links:
@@ -12,6 +11,7 @@ services:
     environment:
       - DB_HOST=postgres
       - SECRET_JWT_SEED=SecretPassword
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./server:/app
       - backendnodes:/app/node_modules
@@ -19,17 +19,16 @@ services:
   client:
     container_name: calendapp-frontend
     build: ./client
-    restart : always
     ports:
       - "3000:3000"
     links:
       - server
     environment:
-      - REACT_APP_CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
     volumes:
       - ./client:/app
-      - frontendnodes/app/node_modules
+      - frontendnodes:/app/node_modules
 
   
   postgres:
