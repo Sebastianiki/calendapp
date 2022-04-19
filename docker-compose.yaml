@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   server:
@@ -14,7 +14,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./server:/app
-      - backendnodes:/app/node_modules
+      - node_modules_server:/app/node_modules
 
   client:
     container_name: calendapp-frontend
@@ -28,7 +28,7 @@ services:
     stdin_open: true
     volumes:
       - ./client:/app
-      - frontendnodes:/app/node_modules
+      - node_modules_client:/app/node_modules
 
   
   postgres:
@@ -45,5 +45,5 @@ services:
 
 volumes:
   data:
-  backendnodes:
-  frontendnodes:
+  node_modules_server:
+  node_modules_client:
