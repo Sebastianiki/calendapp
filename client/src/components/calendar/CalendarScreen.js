@@ -10,7 +10,7 @@ import { Box, Fab, Tooltip } from '@mui/material';
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { uiOpenModal } from '../../actions/ui';
-import { eventCleanActive, eventSetActive, eventDeleted, eventGetEvents, eventDelete } from '../../actions/events';
+import { eventCleanActive, eventSetActive, eventGetEvents, eventDelete } from '../../actions/events';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomSnackBar from '../ui/Snackbar';
@@ -27,7 +27,7 @@ export const CalendarScreen = () => {
 
   useEffect(() => {
     dispatch( eventGetEvents() );
-  }, [])
+  }, [dispatch])
 
   const onDoubleClick = (e) => {
     dispatch( uiOpenModal() );

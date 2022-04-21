@@ -6,16 +6,15 @@ export const authLogin = (email, password) => {
   return async(dispatch) => {
     dispatch( login() );
     const resp = await axiosWOT.post('auth', { email, password })
-      .then(response => {
-        const { token, user } = response.data
-        localStorage.setItem('token', token);
-        localStorage.setItem('token-init-date', new Date().getTime() );
-        dispatch( loginSuccess(user) );
-      })
-      .catch(error => {
-        const { data } = error.response;
-        dispatch( loginFail(data))
-      });
+    const { error, data } = resp;
+    if(error){
+      dispatch( loginFail(data))
+    } else {
+      const { token, user } = data
+      localStorage.setItem('token', token);
+      localStorage.setItem('token-init-date', new Date().getTime() );
+      dispatch( loginSuccess(user) );
+    }
   }
 }
 
@@ -29,16 +28,15 @@ export const authRegister = (name, email, password) => {
   return async(dispatch) => {
     dispatch( register() );
     const resp = await axiosWOT.post('auth/register', {name, email, password})
-      .then(response => {
-        const { token, user } = response.data
-        localStorage.setItem('token', token);
-        localStorage.setItem('token-init-date', new Date().getTime() );
-        dispatch( registerSuccess(user) );
-      })
-      .catch(error => {
-        const { data } = error.response;
-        dispatch( registerFail(data))
-      })
+    const { error, data } = resp;
+    if(error){
+      dispatch( registerFail(data))
+    } else {
+      const { token, user } = data
+      localStorage.setItem('token', token);
+      localStorage.setItem('token-init-date', new Date().getTime() );
+      dispatch( registerSuccess(user) );
+    }
   }
 }
 

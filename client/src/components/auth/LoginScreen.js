@@ -4,7 +4,6 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import {
   Avatar,
-  Button,
   CssBaseline,
   Box,
   Typography,
@@ -156,7 +155,7 @@ export const LoginScreen = () => {
                   label='Confirm password'
                   type='password'
                 />
-                <SubmitButton sx={{ mt: 2 }}>INICIAR SESION</SubmitButton>
+                <SubmitButton sx={{ mt: 2 }}>REGISTRARSE</SubmitButton>
               </Form>
             </Formik>
           </Box>
