@@ -1,49 +1,43 @@
 version: '3.8'
 
 services:
-  server:
-    container_name: calendapp-backend
-    build: ./server
-    ports:
-      - "5000:5000"
-    links:
-      - postgres
-    environment:
-      - DB_HOST=postgres
-      - SECRET_JWT_SEED=SecretPassword
-      - CHOKIDAR_USEPOLLING=true
-    volumes:
-      - ./server:/app
-      - node_modules_server:/app/node_modules
 
-  client:
-    container_name: calendapp-frontend
-    build: ./client
-    ports:
-      - "3000:3000"
-    links:
-      - server
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    stdin_open: true
-    volumes:
-      - ./client:/app
-      - node_modules_client:/app/node_modules
-
-  
-  postgres:
-    container_name: calendapp-postgres
+  db:
+    container_name: calendapp-postgres-prod
     image: postgres:alpine
     restart: always
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
       - data:/var/lib/postgresql/data
 
+  api:
+    env_file:
+      - ./server/.env
+    container_name: calendapp-api-production
+    restart: always
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+
+  ui:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: always
+    container_name: calendapp-ui-production
+    ports:
+      - 80:80
+    depends_on:
+      - api
+
+  
 volumes:
   data:
-  node_modules_server:
-  node_modules_client:
