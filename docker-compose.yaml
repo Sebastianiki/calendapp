@@ -10,8 +10,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    depends_on:
-      - postgres
     expose:
       - 5000
 
