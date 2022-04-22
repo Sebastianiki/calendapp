@@ -2,18 +2,6 @@ version: '3.8'
 
 services:
 
-  db:
-    container_name: calendapp-postgres-prod
-    image: postgres:alpine
-    restart: always
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - data:/var/lib/postgresql/data
-
   api:
     env_file:
       - ./server/.env
@@ -23,9 +11,9 @@ services:
       context: ./server
       dockerfile: Dockerfile
     depends_on:
-      - db
-    ports:
-      - 5000:5000
+      - postgres
+    expose:
+      - 5000
 
   ui:
     build:
@@ -33,11 +21,12 @@ services:
       dockerfile: Dockerfile
     restart: always
     container_name: calendapp-ui-production
-    ports:
-      - 80:80
+    expose:
+      - 80
     depends_on:
       - api
 
-  
-volumes:
-  data:
+networks:
+  default:
+    external:
+      name: main
