@@ -6,19 +6,21 @@ services:
     env_file:
       - ./server/.env
     container_name: calendapp-api-production
-    restart: always
     build:
       context: ./server
       dockerfile: Dockerfile
+    restart: always
     expose:
       - 5000
 
   ui:
+    env_file:
+      - ./client/.env
+    container_name: calendapp-ui-production
     build:
       context: ./client
       dockerfile: Dockerfile
     restart: always
-    container_name: calendapp-ui-production
     expose:
       - 80
     depends_on:
